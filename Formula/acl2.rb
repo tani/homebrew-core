@@ -9,14 +9,11 @@ class Acl2 < Formula
 
   def install
     system "make",
-           "LISP=#{HOMEBREW_PREFIX}/bin/sbcl",
-           "ACL2=#{buildpath}/saved_acl2",
-           "USE_QUICKLISP=0",
-           "all", "basic"
-    system "make",
-           "LISP=#{HOMEBREW_PREFIX}/bin/sbcl",
+           "LISP=#{Formula["sbcl"].opt_bin}/sbcl --dynamic-space-size 2048",
+           "ACL2=#{buildpath}/saved_acl2pr",
+           "ACL2_HONS=h",
            "ACL2_PAR=p",
-           "ACL2=#{buildpath}/saved_acl2p",
+           "ACL2_REAL=r",
            "USE_QUICKLISP=0",
            "all", "basic"
     libexec.install Dir["*"]
@@ -24,12 +21,7 @@ class Acl2 < Formula
     (bin/"acl2").write <<~EOF
       #!/bin/sh
       export ACL2_SYSTEM_BOOKS='#{libexec}/books'
-      #{Formula["sbcl"].opt_bin}/sbcl --core '#{libexec}/saved_acl2.core' --userinit /dev/null --eval '(acl2::sbcl-restart)'
-    EOF
-    (bin/"acl2p").write <<~EOF
-      #!/bin/sh
-      export ACL2_SYSTEM_BOOKS='#{libexec}/books'
-      #{Formula["sbcl"].opt_bin}/sbcl --core '#{libexec}/saved_acl2p.core' --userinit /dev/null --eval '(acl2::sbcl-restart)'
+      #{Formula["sbcl"].opt_bin}/sbcl --noinform --core '#{libexec}/saved_acl2pr.core' --userinit /dev/null --eval '(acl2::sbcl-restart)'
     EOF
   end
 
