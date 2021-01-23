@@ -13,7 +13,7 @@ class Acl2 < Formula
   end
 
   depends_on "clozure-cl"
-  depends_on "openssl"
+  depends_on "openssl@1.1"
   depends_on "z3"
 
   def install
