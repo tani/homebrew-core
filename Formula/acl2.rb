@@ -15,6 +15,7 @@ class Acl2 < Formula
   depends_on "clozure-cl"
   depends_on "openssl@1.1"
   depends_on "z3"
+  depends_on "gnu-sed" => :build
 
   def install
     system "make",
@@ -24,21 +25,9 @@ class Acl2 < Formula
       "ACL2=#{buildpath}/saved_acl2pr",
       "USE_QUICKLISP=1",
       "all", "basic"
+    system Formula["gnu-sed"].opt_bin/"sed", "-i", "s%/tmp/.*/saved_acl2pr%#{libexec}/saved_acl2pr%", buildpath/"saved_acl2pr"
     libexec.install Dir["*"]
-
-    (bin/"acl2").write <<~EOF
-      #!/bin/sh
-      IMAGE=`find #{libexec} -name 'saved_acl2pr.*' | head -n1`
-      if [ -z "$IMAGE" ]
-      then
-        echo "ACL2 image is not found in #{libexec}" 1>&2
-        exit 1
-      else
-        export ACL2_SYSTEM_BOOKS='#{libexec}/books'
-        export CCL_DEFAULT_DIRECTORY="#{Formula["clozure-cl"].libexec}"
-        exec '#{Formula["clozure-cl"].opt_bin}/ccl64' -I "$IMAGE" -Z 64M -K ISO-8859-1 -e '(acl2::acl2-default-restart)' "$@"
-      fi
-    EOF
+    bin.install_symlink libexec/"saved_acl2pr" => "acl2"
   end
 
   test do
