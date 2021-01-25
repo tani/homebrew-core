@@ -17,13 +17,6 @@ class Acl2 < Formula
   depends_on "z3"
 
   def install
-    suffix =
-      if OS.mac?
-        "dx86cl64"
-      elsif OS.linux?
-        "lx86cl64"
-      end
-
     system "make",
       "LISP=#{Formula["clozure-cl"].opt_bin}/ccl64",
       "ACL2_PAR=p",
@@ -35,8 +28,16 @@ class Acl2 < Formula
 
     (bin/"acl2").write <<~EOF
       #!/bin/sh
-      export ACL2_SYSTEM_BOOKS='#{libexec}/books'
-      exec '#{Formula["clozure-cl"].opt_bin}/ccl64' -I '#{libexec}/saved_acl2pr.#{suffix}' -Z 64M -K ISO-8859-1 -e '(acl2::acl2-default-restart)' "$@"
+      IMAGE=`find #{libexec} -name 'saved_acl2pr.*' | head -n1`
+      if [ -z "$IMAGE" ]
+      then
+        echo "ACL2 image is not found in #{libexec}" 1>&2
+        exit 1
+      else
+        export ACL2_SYSTEM_BOOKS='#{libexec}/books'
+        export CCL_DEFAULT_DIRECTORY="#{Formula["clozure-cl"].libexec}"
+        exec '#{Formula["clozure-cl"].opt_bin}/ccl64' -I "$IMAGE" -Z 64M -K ISO-8859-1 -e '(acl2::acl2-default-restart)' "$@"
+      fi
     EOF
   end
 
