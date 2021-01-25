@@ -12,8 +12,8 @@ class Acl2 < Formula
     sha256 "547ba61b3a0514bd55ff3a04b19c4e5792ec19eb64f46cbb672bf30ffd871b93" => :mojave
   end
 
-  depends_on "clozure-cl"
   depends_on "gnu-sed" => :build
+  depends_on "clozure-cl"
   depends_on "openssl@1.1"
   depends_on "z3"
 
@@ -26,8 +26,8 @@ class Acl2 < Formula
       "USE_QUICKLISP=1",
       "all", "basic"
     system Formula["gnu-sed"].opt_bin/"sed",
-	    "-i", "s%/tmp/.*/saved_acl2pr%#{libexec}/saved_acl2pr%",
-	    buildpath/"saved_acl2pr"
+      "-i", "s%/tmp/.*/saved_acl2pr%#{libexec}/saved_acl2pr%",
+      buildpath/"saved_acl2pr"
     libexec.install Dir["*"]
     bin.install_symlink libexec/"saved_acl2pr" => "acl2"
   end
