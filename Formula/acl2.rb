@@ -13,9 +13,9 @@ class Acl2 < Formula
   end
 
   depends_on "clozure-cl"
+  depends_on "gnu-sed" => :build
   depends_on "openssl@1.1"
   depends_on "z3"
-  depends_on "gnu-sed" => :build
 
   def install
     system "make",
@@ -25,7 +25,9 @@ class Acl2 < Formula
       "ACL2=#{buildpath}/saved_acl2pr",
       "USE_QUICKLISP=1",
       "all", "basic"
-    system Formula["gnu-sed"].opt_bin/"sed", "-i", "s%/tmp/.*/saved_acl2pr%#{libexec}/saved_acl2pr%", buildpath/"saved_acl2pr"
+    system Formula["gnu-sed"].opt_bin/"sed",
+	    "-i", "s%/tmp/.*/saved_acl2pr%#{libexec}/saved_acl2pr%",
+	    buildpath/"saved_acl2pr"
     libexec.install Dir["*"]
     bin.install_symlink libexec/"saved_acl2pr" => "acl2"
   end
